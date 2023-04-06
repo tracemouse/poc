@@ -5,24 +5,27 @@
 	<meta charset="UTF-8">
 	<title></title>
 	<style>
-		input{
+		input {
 			font-size: 1.5rem;
 		}
 	</style>
 </head>
 
 <body style="font-size:2rem;">
-	<div id="divCheckWebcam" style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;"></div>
+	<div id="divCheckWebcam" style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;">
+	</div>
 	<div id="divOpenWebCam" style="margin:20px; display:flex;justify-content: center; align-items:center;display:none;">
 		<input type="button" onclick="openWebCam()" value="打开摄像头"></input>
 	</div>
-	<div id="divVideo" style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;display:none;">
+	<div id="divVideo"
+		style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;display:none;">
 		<video playsinline autoplay id="video" width="500" height="500"></video>
 	</div>
-	<div  id="divCapture" style="margin:20px; display:flex;justify-content: center; align-items:center;display:none;">
-		<input type="button" onclick="capture()" value="点击拍照" ></input>
+	<div id="divCapture" style="margin:20px; display:flex;justify-content: center; align-items:center;display:none;">
+		<input type="button" onclick="doCapture()" value="点击拍照"></input>
 	</div>
-	<div  id="divCavas" style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;display:none;">
+	<div id="divCavas"
+		style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;display:none;">
 		<canvas id="canvas" width="500" height="500"></canvas>
 	</div>
 
@@ -146,7 +149,7 @@
 		});
 	}
 
-		//用来匹配不同的浏览器
+	//用来匹配不同的浏览器
 	function getUserMedia(constraints, success, error) {
 		if (navigator.mediaDevices.getUserMedia) {
 			navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
@@ -159,9 +162,7 @@
 		}
 	}
 
-	let video = document.getElementById('video');
-	let canvas = document.getElementById('canvas');
-	let context = canvas.getContext('2d');
+
 
 	// check for microphone/camera support!
 	checkDeviceSupport(function () {
@@ -172,21 +173,21 @@
 
 		document.getElementById('divCheckWebcam').innerHTML = str;
 
-		if(hasWebcam){
+		if (hasWebcam) {
 			document.getElementById('divOpenWebCam').style = "display:block;text-align:center";
-		}else{
+		} else {
 			alert("此设备无摄像头");
 		}
 	});
 
-	function openWebCam(){
+	function openWebCam() {
 		if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
-				// 开启摄像头
+			// 开启摄像头
 
-				getUserMedia({ video: { width: 500, height: 500 } }, success, error);
-			} else {
-				alert("打开摄像头失败");
-			}
+			getUserMedia({ video: { width: 500, height: 500 } }, success, error);
+		} else {
+			alert("打开摄像头失败");
+		}
 	}
 
 	//成功回调
@@ -206,8 +207,12 @@
 	}
 
 
+	let video = document.getElementById('video');
+	let canvas = document.getElementById('canvas');
+	let context = canvas.getContext('2d');
+
 	//实现拍照的功能
-	function capture() {
+	function doCapture() {
 
 		context.drawImage(video, 0, 0, 500, 500);
 
