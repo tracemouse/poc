@@ -223,9 +223,9 @@
 		// 	mediaStreamTrack = null;
 		// }
 
-		// mediaStreamTrack.getTracks().forEach(function (track) {
-		// 	track.stop();
-		// });
+		mediaStreamTrack.getTracks().forEach(function (track) {
+			track.stop();
+		});
 
 		getUserMedia({ video: false}, function(){}, function(){});
 
