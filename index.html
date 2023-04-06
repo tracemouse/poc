@@ -7,14 +7,17 @@
 </head>
 
 <body style="font-size:2rem;">
-	<div id="checkWebcam" style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;"></div>
-	<div style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;">
+	<div id="divCheckWebcam" style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;"></div>
+	<div id="divOpenWebCam" style="margin:20px; display:flex;justify-content: center; align-items:center;display:none;">
+		<input type="button" onclick="openWebCam()" value="打开摄像头"></input>
+	</div>
+	<div id="divVideo" style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;display:none;">
 		<video playsinline autoplay id="video" width="500" height="500"></video>
 	</div>
-	<div style="margin:20px; display:flex;justify-content: center; align-items:center;">
-		<input type="button" onclick="dd()" value="点击拍照"></input>
+	<div  id="divCapture" style="margin:20px; display:flex;justify-content: center; align-items:center;display:none;">
+		<input type="button" onclick="capture()" value="点击拍照"></input>
 	</div>
-	<div style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;">
+	<div  id="divCavas" style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;display:none;">
 		<canvas id="canvas" width="500" height="500"></canvas>
 	</div>
 
@@ -162,33 +165,41 @@
 		// str += 'isMicrophoneAlreadyCaptured: ' + isMicrophoneAlreadyCaptured + "<br>";
 		// str += 'isWebcamAlreadyCaptured: ' + isWebcamAlreadyCaptured + "<br>";
 
-		document.getElementById('checkWebcam').innerHTML = str;
+		document.getElementById('divCheckWebcam').innerHTML = str;
 
 		if(hasWebcam){
-			if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
-				// 开启摄像头
-				getUserMedia({ video: { width: 500, height: 500 } }, success, error);
-			} else {
-				alert("没有摄像头");
-			}
+			document.getElementById('divOpenWebCam').style = "display:block;text-align:center";
 		}
 	});
 
+	function openWebCam(){
+		if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
+				// 开启摄像头
+				getUserMedia({ video: { width: 500, height: 500 } }, success, error);
+			} else {
+				alert("打开摄像头失败");
+			}
+	}
+
 	//成功回调
 	function success(stream) {
+
+		document.getElementById('divCapture').style.display = "display:block;text-align:center";
+		document.getElementById('divVideo').style.display = "display:block;text-align:center";
+		document.getElementById('divCavas').style.display = "display:block;text-align:center";
+
 		video.srcObject = stream;
 		video.play();
 	}
 	//失败回调
 	function error(error) {
-		console.log("打开摄像头失败");
+		alert("打开摄像头失败");
 		console.log(error);
 	}
 
 
-
 	//实现拍照的功能
-	function dd() {
+	function capture() {
 
 		context.drawImage(video, 0, 0, 500, 500);
 
