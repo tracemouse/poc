@@ -29,9 +29,17 @@
 		style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;display:none;">
 		<canvas id="canvas" width="500" height="500"></canvas>
 	</div>
+	<div id="divConfirm" style="margin:20px; display:flex;justify-content: center; align-items:center;display:none;">
+		<input type="button" onclick="doConfirm()" value="确定"></input>
+		<input type="button" onclick="reCapture()" value="重拍"></input>
+	</div>
 
 </body>
 <script>
+
+	//用来匹配不同的浏览器
+	const media = (navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+	var mediaStreamTrack;
 
 	if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
 		// Firefox 38+ seems having support of enumerateDevicesx
@@ -138,21 +146,35 @@
 				if (device.kind === 'videoinput') {
 					hasWebcam = true;
 				}
-				console.log(device);
 
 				// there is no 'videoouput' in the spec.
 				MediaDevices.push(device);
 			});
-			console.log("completed");
 			if (callback) {
 				callback();
 			}
 		});
 	}
 
-	//用来匹配不同的浏览器
-	const media = (navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
-	var mediaStreamTrack;
+	//检查设备是否有摄像头
+	checkDeviceSupport(function () {
+		let str = 'hasWebCam: ' + hasWebcam + "<br>";
+		str += 'hasMicrophone: ' + hasMicrophone + "<br>";
+		// str += 'isMicrophoneAlreadyCaptured: ' + isMicrophoneAlreadyCaptured + "<br>";
+		// str += 'isWebcamAlreadyCaptured: ' + isWebcamAlreadyCaptured + "<br>";
+
+		document.getElementById('divCheckWebcam').innerHTML = str;
+
+		if (hasWebcam) {
+			if(media){
+				show('divOpenWebCam');
+			}else{
+				alert("此设备无摄像头");
+			}
+		} else {
+			alert("此设备无摄像头");
+		}
+	});
 
 	function getUserMedia(constraints, success, error) {
 		if (navigator.mediaDevices.getUserMedia) {
@@ -166,50 +188,30 @@
 		}
 	}
 
-	// check for microphone/camera support!
-	checkDeviceSupport(function () {
-		let str = 'hasWebCam: ' + hasWebcam + "<br>";
-		str += 'hasMicrophone: ' + hasMicrophone + "<br>";
-		// str += 'isMicrophoneAlreadyCaptured: ' + isMicrophoneAlreadyCaptured + "<br>";
-		// str += 'isWebcamAlreadyCaptured: ' + isWebcamAlreadyCaptured + "<br>";
-
-		document.getElementById('divCheckWebcam').innerHTML = str;
-
-		if (hasWebcam) {
-			document.getElementById('divOpenWebCam').style = "display:block;text-align:center;margin:20px;";
-		} else {
-			alert("此设备无摄像头");
-		}
-	});
-
+	//打开摄像头
 	function openWebCam() {
-		if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
-			// 开启摄像头
-
-			getUserMedia({ video: true }, success, error);
-		} else {
-			alert("打开摄像头失败");
-		}
+		getUserMedia({ video: true }, openSuccess, openError);
 	}
 
-	//成功回调
-	function success(stream) {
+	//打开摄像头成功的回调
+	function openSuccess(stream) {
 
-		document.getElementById('divOpenWebCam').style = "display:none;";
-		document.getElementById('divCapture').style = "display:block;text-align:center;margin:20px;";
-		document.getElementById('divVideo').style = "display:block;text-align:center;margin:20px;";
-		document.getElementById('divCavas').style = "display:block;text-align:center;margin:20px;";
-
+		hide('divOpenWebCam');
+		show('divCapture');
+		show('divVideo');
+		hide('divCavas');
 		video.srcObject = stream;
 		video.play();
 
 		mediaStreamTrack = stream;
 	}
-	//失败回调
-	function error(error) {
+
+	//打开摄像头失败的回调
+	function openError(error) {
 		alert("打开摄像头失败");
 		console.log(error);
-		document.getElementById('divOpenWebCam').style = "display:none;";
+		hide('divOpenWebCam');
+		
 	}
 
 
@@ -239,52 +241,48 @@
     	// 	console.log(result.state);
   		// });
 
-		document.getElementById('divCapture').style = "display:none;";
-		document.getElementById('divVideo').style = "display:none;";
-		// document.getElementById('divCavas').style = "display:none;";
-		document.getElementById('divOpenWebCam').style = "display:block;text-align:center;margin:20px;";
+		show('divCapture');
+		hide('divVideo');
+		show('divOpenWebCam');
 
 	}
 
 	//拍照
 	function doCapture() {
-
-		context.drawImage(video, 0, 0, 500, 500).then(
-			function(){
-				this.closeWebCam();
-			}
-		);
+		hide('divCapture');
+		hide('divVideo');
+		show('divConfirm');
+		show('divCavas');
+		context.drawImage(video, 0, 0, 500, 500);
 	}
 
+	//重拍
+	function reCapture() {
+		show('divVideo');
+		hide('divCavas');
+		hide('divConfirm');
+		show('divCapture');
+	}
 
-	//下面的代码是保存canvas标签里的图片并且将其按一定的规则重命名
-	var type = 'jpg';
-	var _fixType = function (type) {
-		type = type.toLowerCase().replace(/jpg/i, 'jpeg');
-		var r = type.match(/png|jpeg|bmp|gif/)[0];
-		return 'image/' + r;
-	};
+	//确认
+	function doConfirm(){
 
-	var saveFile = function (filename) {
-		//获取canvas标签里的图片内容
-		var imgData = document.getElementById('canvas').toDataURL(type);
-		imgData = imgData.replace(_fixType(type), 'image/octet-stream');
+		this.closeWebCam();
+		hide('divConfirm');
+		show('divOpenWebCam');
+		hide('divCavas');
+		hide('divVideo');
+		hide('divCapture');
+	}
+	
+	function show(id){
+		document.getElementById(id).style = "display:block;text-align:center;";
+	}
 
-		var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
-		save_link.href = imgData; //base64码
-		save_link.download = filename;//图片名称
+	function hide(id){
+		document.getElementById(id).style = "display:none;";
+	}
 
-		var divbox = document.getElementById("box");
-		divbox.innerText = imgData;
-
-		var event = document.createEvent('MouseEvents');
-		event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-		save_link.dispatchEvent(event);
-
-	};
-
-	// 下载后的文件名规则
-	var filename = 11111 + '.' + type;
 </script>
 
 
