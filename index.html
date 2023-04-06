@@ -223,9 +223,11 @@
 		// 	mediaStreamTrack = null;
 		// }
 
-		mediaStreamTrack.getTracks().forEach(function (track) {
-			track.stop();
-		});
+		// mediaStreamTrack.getTracks().forEach(function (track) {
+		// 	track.stop();
+		// });
+
+		getUserMedia({ video: false}, function(){}, function(){});
 
 		document.getElementById('divCapture').style = "display:none;";
 		document.getElementById('divVideo').style = "display:none;";
