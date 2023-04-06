@@ -6,7 +6,7 @@
 	<title></title>
 </head>
 
-<body>
+<body style="font-size:20px;">
 	<div id="checkWebcam" style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;"></div>
 	<div style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;">
 		<video playsinline autoplay id="video" width="500" height="500"></video>
@@ -169,7 +169,7 @@
 				// 开启摄像头
 				getUserMedia({ video: { width: 500, height: 500 } }, success, error);
 			} else {
-			alert("没有摄像头");
+				alert("没有摄像头");
 			}
 		}
 	});
@@ -182,6 +182,7 @@
 	//失败回调
 	function error(error) {
 		console.log("打开摄像头失败");
+		console.log(error);
 	}
 
 
