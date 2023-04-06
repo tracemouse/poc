@@ -166,13 +166,7 @@
 		}
 	}
 
-	function closeWebCam() {
-		if (mediaStreamTrack) {
-			console.log(this.mediaStreamTrack);
-			console.log(this.mediaStreamTrack.getTracks());
-			mediaStreamTrack.getTracks()[0].stop();
-		}
-	}
+
 
 
 	// check for microphone/camera support!
@@ -223,6 +217,19 @@
 	let video = document.getElementById('video');
 	let canvas = document.getElementById('canvas');
 	let context = canvas.getContext('2d');
+
+	function closeWebCam() {
+		// if (mediaStreamTrack) {
+		// 	console.log(this.mediaStreamTrack);
+		// 	console.log(this.mediaStreamTrack.getTracks());
+		// 	mediaStreamTrack.getTracks()[0].stop();
+		// 	mediaStreamTrack = null;
+		// }
+
+		mediaStreamTrack.getTracks().forEach(function (track) {
+			track.stop();
+		});
+	}
 
 	//实现拍照的功能
 	function doCapture() {
