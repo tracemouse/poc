@@ -35,22 +35,26 @@
 	let video = document.getElementById('video');
 	let canvas = document.getElementById('canvas');
 	let context = canvas.getContext('2d');
+
 	//成功回调
 	function success(stream) {
-		video.srcObject = stream;
-		video.play();
+		// video.srcObject = stream;
+		// video.play();
 	}
 	//失败回调
 	function error(error) {
-		console.log("访问用户媒体失败");
+		console.log("打开摄像头失败");
 	}
-	//开启摄像头
+
 	if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
-		// getUserMedia({ video: { width: 500, height: 500 } }, success, error);
-		alert("支持");
+
+		alert("有摄像头");
+		//开启摄像头
+		getUserMedia({ video: { width: 500, height: 500 } }, success, error);
 	} else {
-		alert("不支持");
+		alert("没有摄像头");
 	}
+
 	//实现拍照的功能
 	function dd() {
 
