@@ -16,6 +16,7 @@
 	</div>
 	<div id="divOpenWebCam" style="margin:20px; display:flex;justify-content: center; align-items:center;display:none;">
 		<input type="button" onclick="openWebCam()" value="打开摄像头"></input>
+		<input type="button" onclick="closeWebCam()" value="关闭摄像头"></input>
 	</div>
 	<div id="divVideo"
 		style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;display:none;">
@@ -150,6 +151,9 @@
 	}
 
 	//用来匹配不同的浏览器
+	const media = (navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+	var mediaStreamTrack;
+
 	function getUserMedia(constraints, success, error) {
 		if (navigator.mediaDevices.getUserMedia) {
 			navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
@@ -162,6 +166,13 @@
 		}
 	}
 
+	function closeWebCam() {
+		if (mediaStreamTrack) {
+			console.log(this.mediaStreamTrack);
+			console.log(this.mediaStreamTrack.getTracks());
+			mediaStreamTrack.getTracks()[0].stop();
+		}
+	}
 
 
 	// check for microphone/camera support!
@@ -174,7 +185,7 @@
 		document.getElementById('divCheckWebcam').innerHTML = str;
 
 		if (hasWebcam) {
-			document.getElementById('divOpenWebCam').style = "display:block;text-align:center";
+			document.getElementById('divOpenWebCam').style = "display:block;text-align:center;margin:20px;";
 		} else {
 			alert("此设备无摄像头");
 		}
@@ -193,12 +204,14 @@
 	//成功回调
 	function success(stream) {
 
-		document.getElementById('divCapture').style = "display:block;text-align:center";
-		document.getElementById('divVideo').style = "display:block;text-align:center";
-		document.getElementById('divCavas').style = "display:block;text-align:center";
+		document.getElementById('divCapture').style = "display:block;text-align:center;margin:20px;";
+		document.getElementById('divVideo').style = "display:block;text-align:center;margin:20px;";
+		document.getElementById('divCavas').style = "display:block;text-align:center;margin:20px;";
 
 		video.srcObject = stream;
 		video.play();
+
+		mediaStreamTrack = stream;
 	}
 	//失败回调
 	function error(error) {
