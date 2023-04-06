@@ -186,7 +186,7 @@
 		if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
 			// 开启摄像头
 
-			getUserMedia({ video: { width: 500, height: 500 } }, success, error);
+			getUserMedia({ video: true }, success, error);
 		} else {
 			alert("打开摄像头失败");
 		}
