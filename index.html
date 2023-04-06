@@ -229,9 +229,13 @@
 
 		getUserMedia({ video: false}, function(){}, function(){});
 
+		video.srcObject = null; 
+
 		document.getElementById('divCapture').style = "display:none;";
 		document.getElementById('divVideo').style = "display:none;";
 		document.getElementById('divCavas').style = "display:none;";
+
+
 	}
 
 	//实现拍照的功能
