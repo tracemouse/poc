@@ -229,6 +229,10 @@
 		mediaStreamTrack.getTracks().forEach(function (track) {
 			track.stop();
 		});
+
+		document.getElementById('divCapture').style = "display:none;";
+		document.getElementById('divVideo').style = "display:none;";
+		document.getElementById('divCavas').style = "display:none;";
 	}
 
 	//实现拍照的功能
