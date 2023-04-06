@@ -7,14 +7,17 @@
 </head>
 
 <body>
-	<video playsinline autoplay id="video" width="500" height="500"></video>
-	<canvas id="canvas" width="500" height="500"></canvas>
-
-	<a href="" onclick="dd()">拍照</a>
-
-	<div id="box">
-
+	<div id="checkWebcam" style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;"></div>
+	<div style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;">
+		<video playsinline autoplay id="video" width="500" height="500"></video>
 	</div>
+	<div style="margin:20px; display:flex;justify-content: center; align-items:center;">
+		<input type="button" onclick="dd()" value="点击拍照"></input>
+	</div>
+	<div style="margin:20px; display:flex;justify-content: center; align-items:center; width:100%;">
+		<canvas id="canvas" width="500" height="500"></canvas>
+	</div>
+
 </body>
 <script>
 
@@ -134,16 +137,7 @@
 		});
 	}
 
-	// check for microphone/camera support!
-	checkDeviceSupport(function () {
-		document.write('hasWebCam: ', hasWebcam, '<br>');
-		document.write('hasMicrophone: ', hasMicrophone, '<br>');
-		document.write('isMicrophoneAlreadyCaptured: ', isMicrophoneAlreadyCaptured, '<br>');
-		document.write('isWebcamAlreadyCaptured: ', isWebcamAlreadyCaptured, '<br>');
-	});
-
-
-	//用来匹配不同的浏览器
+		//用来匹配不同的浏览器
 	function getUserMedia(constraints, success, error) {
 		if (navigator.mediaDevices.getUserMedia) {
 			navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
@@ -160,6 +154,25 @@
 	let canvas = document.getElementById('canvas');
 	let context = canvas.getContext('2d');
 
+	// check for microphone/camera support!
+	checkDeviceSupport(function () {
+		let str = 'hasWebCam: ' + hasWebcam + "<br>";
+		str += 'hasMicrophone: ' + hasMicrophone + "<br>";
+		// str += 'isMicrophoneAlreadyCaptured: ' + isMicrophoneAlreadyCaptured + "<br>";
+		// str += 'isWebcamAlreadyCaptured: ' + isWebcamAlreadyCaptured + "<br>";
+
+		document.getElementById('checkWebcam').innerHTML = str;
+
+		if(hasWebcam){
+			if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
+				// 开启摄像头
+				getUserMedia({ video: { width: 500, height: 500 } }, success, error);
+			} else {
+			alert("没有摄像头");
+			}
+		}
+	});
+
 	//成功回调
 	function success(stream) {
 		video.srcObject = stream;
@@ -170,13 +183,7 @@
 		console.log("打开摄像头失败");
 	}
 
-	if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
 
-		// 开启摄像头
-		getUserMedia({ video: { width: 500, height: 500 } }, success, error);
-	} else {
-		alert("没有摄像头");
-	}
 
 	//实现拍照的功能
 	function dd() {
